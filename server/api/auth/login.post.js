@@ -1,13 +1,15 @@
-import { Users } from "../../utils/models";
+import bcryptjs from "bcryptjs";
+import { PrismaClient } from "@prisma/client";
+
 import createToken from "../../utils/create-token";
 
-import bcryptjs from "bcryptjs";
+const prisma = new PrismaClient();
 
 export default defineEventHandler(async e => {
   try {
     const { phone, password } = await readBody(e);
       
-    const user = await Users.findOne({ phone });
+    const user = await prisma.user.findUnique({ where: { phone } });
     if(!user) throw createError({
       statusCode: 404,
       statusMessage: "Phone number is not registered"
@@ -19,7 +21,7 @@ export default defineEventHandler(async e => {
       statusMessage: "Incorrect password"
     });
 
-    const token = createToken(user._doc._id.toString());
+    const token = createToken(user.id);
 
     return { token };
   } catch (err) {

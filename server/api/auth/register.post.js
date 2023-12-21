@@ -1,13 +1,17 @@
-import { Users } from "../../utils/models";
+import bcryptjs from "bcryptjs";
+import { PrismaClient } from "@prisma/client";
+
 import createToken from "../../utils/create-token";
 
-import bcryptjs from "bcryptjs";
+const prisma = new PrismaClient();
 
 export default defineEventHandler(async e => {
   try {
     const { name, phone, password } = await readBody(e);
 
-    const userExisting = await Users.findOne({ phone });
+    const userExisting = await prisma.user.findUnique({
+      where: { phone }
+    });
     if (userExisting) throw createError({
       statusCode: 409,
       statusMessage: "This phone number is already registered. Please try logging in."
@@ -16,13 +20,15 @@ export default defineEventHandler(async e => {
     const
       salt = await bcryptjs.genSalt(10),
       hashed = await bcryptjs.hash(password, salt),
-      user = new Users({
-        name,
-        phone,
-        password: hashed
-      }),
-      savedUser = await user.save(),
-      token = createToken(savedUser._doc._id.toString());
+      createdUser = await prisma.user.create({
+        data: {
+          name,
+          phone,
+          password: hashed
+        }
+      });
+
+    const token = createToken(createdUser.id);
 
     return { token };
   } catch (err) {

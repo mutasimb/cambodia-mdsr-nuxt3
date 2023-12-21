@@ -69,7 +69,7 @@ const
             </div>
 
             <v-btn height="40" rounded="lg" block variant="outlined" class="b-100" color="primary-black"
-              @click="onFacebook"><v-img class="mr-2" :width="20" :height="20" :src="imgLogoFacebook" /> {{
+              @click="onFacebook" disabled><v-img class="mr-2" :width="20" :height="20" :src="imgLogoFacebook" /> {{
                 $t("Connect with Facebook")
               }}</v-btn>
 

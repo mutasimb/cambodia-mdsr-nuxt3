@@ -31,9 +31,9 @@ export const useAuthStore = defineStore('auth', () => {
 
       if (error.value) errorMessage.value = toRaw(error.value).statusMessage;
 
-      if (data.value) {
+      if (data.value && data.value.token) {
         const token = useCookie('token');
-        token.value = data?.value?.token;
+        token.value = data.value.token;
 
         isLoggedIn.value = true;
 
@@ -53,9 +53,9 @@ export const useAuthStore = defineStore('auth', () => {
 
       if (error.value) errorMessage.value = toRaw(error.value).statusMessage;
 
-      if (data.value) {
+      if (data.value && data.value.token) {
         const token = useCookie('token');
-        token.value = data?.value?.token;
+        token.value = data.value.token;
 
         isLoggedIn.value = true;
 
@@ -85,7 +85,6 @@ export const useAuthStore = defineStore('auth', () => {
 
     login,
     register,
-    
     logout,
     getUser
   }

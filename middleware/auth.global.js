@@ -11,12 +11,19 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     
     token = useCookie('token');
 
-  // console.log('to', to);
-  // console.log('from', from);
-  // console.log('token', token.value);
-
   if (token.value) {
-    
-  }
+    isLoggedIn.value = true;
 
+    if (to.name === "index" || to.name === "register") {
+      abortNavigation();
+      return navigateTo("/provider")
+    }
+  } else {
+    isLoggedIn.value = false;
+
+    if (to.name !== "index" && to.name !== "register") {
+      abortNavigation();
+      return navigateTo("/")
+    }
+  }
 })
